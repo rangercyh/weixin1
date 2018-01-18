@@ -1,0 +1,60 @@
+// 方块边长
+const SQUARE_SLIDE_LENGTH = 50
+const MOVEING_SPEED = 5
+
+// panel区域
+const PANEL_ROW = 7
+const PANEL_COL = 6
+
+// 预准备区域
+const PRE_ROW = 2
+const PRE_COL = 6
+
+// 分界
+const DIS_HEIGHT = 30
+
+// 边框
+const FRAME_LENGTH = 10
+
+const Args = {
+    SQUARE_SLIDE_LENGTH : SQUARE_SLIDE_LENGTH,
+
+    PANEL : {
+        ROW : PANEL_ROW,
+        COL : PANEL_COL,
+        WIDTH : SQUARE_SLIDE_LENGTH * PANEL_COL,
+        HEIGHT : SQUARE_SLIDE_LENGTH * PANEL_ROW,
+        X : FRAME_LENGTH,
+        Y : FRAME_LENGTH + SQUARE_SLIDE_LENGTH * PRE_ROW + DIS_HEIGHT,
+    },
+
+    PRE : {
+        ROW : PRE_ROW,
+        COL : PRE_COL,
+        WIDTH : SQUARE_SLIDE_LENGTH * PRE_COL,
+        HEIGHT : SQUARE_SLIDE_LENGTH * PRE_ROW,
+        X : FRAME_LENGTH,
+        Y : FRAME_LENGTH,
+    },
+
+    DIS_LINE : {
+        WIDTH : SQUARE_SLIDE_LENGTH * PANEL_COL,
+        HEIGHT : DIS_HEIGHT,
+        X : FRAME_LENGTH,
+        Y : FRAME_LENGTH + SQUARE_SLIDE_LENGTH * PRE_ROW,
+    },
+
+    FRAME_LENGTH : FRAME_LENGTH,
+
+    SCREEN_WIDTH : SQUARE_SLIDE_LENGTH * PRE_COL,
+    SCREEN_HEIGHT : SQUARE_SLIDE_LENGTH * (PRE_ROW + PANEL_ROW) + DIS_HEIGHT,
+
+    MOVEING_SPEED : MOVEING_SPEED,
+    MOVING_LEFT : 1,
+    MOVING_RIGHT : 2,
+    MOVING_DOWN : 3,
+}
+
+console.log(Args.SCREEN_WIDTH, Args.SCREEN_HEIGHT)
+
+export default Args
