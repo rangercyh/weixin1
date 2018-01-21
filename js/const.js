@@ -15,7 +15,7 @@
 
 // 方块边长
 const SQUARE_SLIDE_LENGTH = 50
-const MOVEING_SPEED = 5
+const MOVEING_SPEED = SQUARE_SLIDE_LENGTH / 5
 
 // panel区域
 const PANEL_ROW = 7
@@ -114,13 +114,7 @@ let Args = {
         },
     },
 
-    DIS_LINE : {
-        WIDTH : SQUARE_SLIDE_LENGTH * PANEL_COL,
-        HEIGHT : DIS_HEIGHT,
-        X : FRAME_LENGTH,
-        Y : FRAME_LENGTH + SQUARE_SLIDE_LENGTH * PRE_ROW,
-    },
-
+    DIS_HEIGHT : DIS_HEIGHT,
     FRAME_LENGTH : FRAME_LENGTH,
 
     SCREEN_WIDTH : SQUARE_SLIDE_LENGTH * PRE_COL,
@@ -130,6 +124,44 @@ let Args = {
     MOVING_LEFT : 1,
     MOVING_RIGHT : 2,
     MOVING_DOWN : 3,
+
+    check_in_screen : function(x, y) {
+        if ((x > this.FRAME_LENGTH && x < (this.FRAME_LENGTH + this.SCREEN_WIDTH)) &&
+            (y > this.FRAME_LENGTH && y < (this.FRAME_LENGTH + this.SCREEN_HEIGHT))) {
+            return true
+        }
+    },
+
+    DUMP_BTN : {
+        x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
+        y : 100,
+        w : 80,
+        h : 30,
+        style : "#0aaaff",
+        font : "normal small-caps 25px arial",
+        text : "打印",
+        check_click : function(x, y) {
+            let click = (x >= this.x && x <= (this.x + this.w)) &&
+                        (y >= this.y && y <= (this.y + this.h))
+            // console.log('dump btn click', click)
+            return click
+        },
+    },
+    RESTART_BTN : {
+        x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
+        y : 400,
+        w : 80,
+        h : 30,
+        style : "#00FF00",
+        font : "normal small-caps 25px arial",
+        text : "重置",
+        check_click : function(x, y) {
+            let click = (x >= this.x && x <= (this.x + this.w)) &&
+                        (y >= this.y && y <= (this.y + this.h))
+            // console.log('restart btn click', click)
+            return click
+        },
+    },
 }
 
 console.log(Args.SCREEN_WIDTH, Args.SCREEN_HEIGHT)

@@ -37,7 +37,7 @@ const Squares_Cfg = {
 }
 
 export default class Square extends Sprite {
-    constructor(lvl, idx, stat) {
+    constructor(id, lvl, idx, stat) {
         super(Squares_Cfg[lvl].img, Const.SQUARE_SLIDE_LENGTH, Const.SQUARE_SLIDE_LENGTH)
         let pos = Const[stat].idx2pos(idx)
         this.x = pos.x
@@ -45,6 +45,7 @@ export default class Square extends Sprite {
         this.lvl = lvl
         this.stat = stat
         this.idx = idx
+        this.id = id
     }
 
     check_set_idx(idx) {
@@ -59,21 +60,23 @@ export default class Square extends Sprite {
     }
 
     start_run() {
-        this.stat = 'PANEL'
         this.running = true
-        console.log('start')
+        // console.log('start', this.id, this.idx)
     }
 
     stop_run() {
         this.running = false
+        // console.log('stop', this.id, this.idx)
     }
 
     update() {
         if (this.running) {
             this.y += Const.MOVEING_SPEED
-            console.log(this.x, this.y)
             let idx = Const.PANEL.pos2idx(this.x, this.y)
             if (idx) {
+                if (this.stat != 'PANEL') {
+                    this.stat = 'PANEL'
+                }
                 this.idx = idx
             }
         }

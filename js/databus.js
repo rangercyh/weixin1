@@ -33,26 +33,39 @@ export default class DataBus {
 
         console.log('game reset')
         // 添加初始方块
-        Game.init_squares()
+        Game.add_new_squares()
 
-        this.gameOver = false
+        this.gameover = false
+    }
+
+    btn_dispatch(x, y) {
+        if (Const.RESTART_BTN.check_click(x, y) && this.gameover) {
+            console.log('gameover touch')
+            this.reset()
+        }
+        if (Const.DUMP_BTN.check_click(x, y)) {
+            drawseq.dump()
+        }
     }
 
     touchEventHandler(e) {
         e.preventDefault()
-        console.log('gameover touch')
-        this.reset()
+        if (e.touches.length > 0) {
+            let x = e.touches[0].clientX
+            let y = e.touches[0].clientY
+            this.btn_dispatch(x, y)
+        }
     }
 
     update() {
-        if (this.gameOver) {
+        if (this.gameover) {
             if (!this.touchHandler) {
                 this.game_over()
             }
             return
         }
         this.frame++
-        this.gameOver = Game.game_update()
+        Game.game_update(this)
         drawseq.update()
     }
 
@@ -64,9 +77,15 @@ export default class DataBus {
         canvas.addEventListener('touchstart', ((e) => {
             e.preventDefault()
             if (!this.moving && e.touches.length == 1) {
-                move_dir = null
-                startX = e.touches[0].clientX
-                startY = e.touches[0].clientY
+                let x = e.touches[0].clientX
+                let y = e.touches[0].clientY
+                if (Const.check_in_screen(x, y)) {
+                    move_dir = null
+                    startX = x
+                    startY = y
+                } else {
+                    this.btn_dispatch(x, y)
+                }
             }
         }).bind(this))
 
@@ -75,24 +94,20 @@ export default class DataBus {
             if (startX && startY && e.touches.length == 1) {
                 let x = e.touches[0].clientX
                 let y = e.touches[0].clientY
-
-                let diffX = x - startX
-                let diffY = y - startY
-
-                if (Math.abs(diffX) > Math.abs(diffY) && diffX > 0) {
-                    console.log("向右")
-                    move_dir = Const.MOVING_RIGHT
-                }
-                if (Math.abs(diffX) > Math.abs(diffY) && diffX < 0) {
-                    console.log("向左")
-                    move_dir = Const.MOVING_LEFT
-                }
-                if (Math.abs(diffX) < Math.abs(diffY) && diffY > 0) {
-                    console.log("向下")
-                    move_dir = Const.MOVING_DOWN
-                }
-                if (Math.abs(diffX) < Math.abs(diffY) && diffY < 0) {
-                    console.log("向上")
+                if (Const.check_in_screen(x, y)) {
+                    let diffX = x - startX
+                    let diffY = y - startY
+                    if (Math.abs(diffX) > Math.abs(diffY) && diffX > 0) {
+                        move_dir = Const.MOVING_RIGHT
+                    }
+                    if (Math.abs(diffX) > Math.abs(diffY) && diffX < 0) {
+                        move_dir = Const.MOVING_LEFT
+                    }
+                    if (Math.abs(diffX) < Math.abs(diffY) && diffY > 0) {
+                        move_dir = Const.MOVING_DOWN
+                    }
+                    if (Math.abs(diffX) < Math.abs(diffY) && diffY < 0) {
+                    }
                 }
             }
         }).bind(this))
@@ -102,7 +117,7 @@ export default class DataBus {
             if (startX && startY && move_dir) {
                 startX = null
                 startY = null
-                if (!this.gameOver) {
+                if (!this.gameover) {
                     Game.move_effect(this, move_dir)
                 }
             }
