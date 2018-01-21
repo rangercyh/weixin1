@@ -28,27 +28,39 @@ export default class DrawSeq {
     }
 
     reset() {
-        this.panel_squares = []
-        this.pre_squares = []
+        this.squares = []
     }
 
-    add_panel_square(square) {
-        this.panel_squares.push(square)
+    add_square(square) {
+        this.squares.push(square)
     }
 
-    add_pre_square(square) {
-        this.pre_squares.push(square)
+    get_squares() {
+        return this.squares
     }
-
-    get_panel_squares() {
-        return this.panel_squares
-    }
-
     get_pre_squares() {
-        return this.pre_squares
+        let squares = []
+        this.squares.forEach((v) => {
+            if (v.stat == 'PRE') {
+                squares.push(v)
+            }
+        })
+        return squares
+    }
+    get_running_squares() {
+        let squares = []
+        this.squares.forEach((v) => {
+            if (v.running) {
+                squares.push(v)
+            }
+        })
+        return squares
     }
 
     update() {
+        this.squares.forEach((v) => {
+            v.update()
+        })
     }
 
     draw() {
@@ -58,11 +70,8 @@ export default class DrawSeq {
         // 画背景
         this.bg.drawToCanvas(Const.FRAME_LENGTH, Const.FRAME_LENGTH)
         // 画方块
-        this.pre_squares.forEach((square) => {
-            square.drawToCanvas(square.x, square.y)
-        })
-        this.panel_squares.forEach((square) => {
-            square.drawToCanvas(square.x, square.y)
+        this.squares.forEach((square) => {
+            square.draw()
         })
         // 画边框
         draw_frames()

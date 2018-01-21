@@ -31,6 +31,7 @@ export default class DataBus {
         this.moving = false
         drawseq.reset()
 
+        console.log('game reset')
         // 添加初始方块
         Game.init_squares()
 
@@ -102,7 +103,7 @@ export default class DataBus {
                 startX = null
                 startY = null
                 if (!this.gameOver) {
-                    Game.move_effect(move_dir)
+                    Game.move_effect(this, move_dir)
                 }
             }
         }).bind(this))

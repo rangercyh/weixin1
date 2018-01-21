@@ -5,7 +5,6 @@ let databus = new DataBus()
 
 export default class Main {
     constructor() {
-        databus.reset()
         this.loop()
     }
 
