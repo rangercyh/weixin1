@@ -15,22 +15,27 @@ let draw_frames = function(canvas_ctx = ctx) {
 }
 
 let draw_buttons = function(canvas_ctx = ctx) {
-    canvas_ctx = ctx
-    canvas_ctx.save()
-    canvas_ctx.fillStyle = Const.DUMP_BTN.style
-    canvas_ctx.fillRect(Const.DUMP_BTN.x, Const.DUMP_BTN.y, Const.DUMP_BTN.w, Const.DUMP_BTN.h)
-    canvas_ctx.restore()
-    canvas_ctx.save()
-    canvas_ctx.font = Const.DUMP_BTN.font
-    canvas_ctx.fillText(Const.DUMP_BTN.text, Const.DUMP_BTN.x + 14, Const.DUMP_BTN.y + 22)
-    canvas_ctx.restore()
+    for (let k in Const.BTNS) {
+        canvas_ctx.save()
+        canvas_ctx.fillStyle = Const.BTNS[k].style
+        canvas_ctx.fillRect(Const.BTNS[k].x, Const.BTNS[k].y, Const.BTNS[k].w, Const.BTNS[k].h)
+        canvas_ctx.restore()
+        canvas_ctx.save()
+        canvas_ctx.font = Const.BTNS[k].font
+        canvas_ctx.fillText(Const.BTNS[k].text, Const.BTNS[k].text_x(), Const.BTNS[k].text_y())
+        canvas_ctx.restore()
+    }
+}
+
+let draw_gameover = function(score, canvas_ctx = ctx) {
     canvas_ctx.save()
     canvas_ctx.fillStyle = Const.RESTART_BTN.style
     canvas_ctx.fillRect(Const.RESTART_BTN.x, Const.RESTART_BTN.y, Const.RESTART_BTN.w, Const.RESTART_BTN.h)
     canvas_ctx.restore()
     canvas_ctx.save()
     canvas_ctx.font = Const.RESTART_BTN.font
-    canvas_ctx.fillText(Const.RESTART_BTN.text, Const.RESTART_BTN.x + 14, Const.RESTART_BTN.y + 22)
+    canvas_ctx.fillText(Const.RESTART_BTN.text, Const.RESTART_BTN.text_x(), Const.RESTART_BTN.text_y())
+    canvas_ctx.fillText("积分：" + score, Const.RESTART_BTN.text_x() + 20, Const.RESTART_BTN.text_y() + 30)
     canvas_ctx.restore()
 }
 
@@ -51,13 +56,21 @@ export default class DrawSeq {
     reset() {
         this.squares = []
         this.square_id = 1
+        this.squares_lvl_map = {}
     }
 
     add_square(lvl, idx, stat) {
         this.squares.push(new Square(this.square_id, lvl, idx, stat))
         this.square_id++
+        if (!this.squares_lvl_map[lvl]) {
+            this.squares_lvl_map[lvl] = 0
+        }
+        this.squares_lvl_map[lvl] += 1
     }
 
+    get_squares_map() {
+        return this.squares_lvl_map
+    }
     get_squares() {
         return this.squares
     }
@@ -70,18 +83,38 @@ export default class DrawSeq {
         })
         return squares
     }
-    get_running_squares() {
+    get_moving_squares() {
         let squares = []
+        let arrow = 0
         this.squares.forEach((v) => {
-            if (v.running) {
+            if (v.running > 0) {
                 squares.push(v)
+                arrow = v.running
             }
         })
-        // 按照idx排序，由大到小
-        squares.sort(function(a, b) {
-            return a.idx > b.idx
-        })
-        return squares
+        if (arrow == Const.RUNNING_ARROW.DOWN) {
+            // 按照idx排序，由大到小
+            squares.sort(function(a, b) {
+                return b.idx - a.idx
+            })
+        }
+        if (arrow == Const.RUNNING_ARROW.LEFT) {
+            // 按照col排序，由小到大
+            squares.sort(function(a, b) {
+                let a_col = a.idx % 10
+                let b_col = b.idx % 10
+                return a_col - b_col
+            })
+        }
+        if (arrow == Const.RUNNING_ARROW.RIGHT) {
+            // 按照col排序，由大到小
+            squares.sort(function(a, b) {
+                let a_col = a.idx % 10
+                let b_col = b.idx % 10
+                return b_col - a_col
+            })
+        }
+        return { squares : squares, arrow : arrow }
     }
     get_panel_squares() {
         let squares = []
@@ -144,7 +177,7 @@ export default class DrawSeq {
         })
     }
 
-    draw() {
+    draw(databus) {
         // 清除画布
         ctx.clearRect(0, 0, Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT)
 
@@ -159,5 +192,9 @@ export default class DrawSeq {
 
         // 画调试按钮
         draw_buttons()
+
+        if (databus.gameover) {
+            draw_gameover(databus.score)
+        }
     }
 }

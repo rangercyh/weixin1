@@ -21,4 +21,13 @@ export default class Main {
     render() {
         databus.draw()
     }
+
+    slide(arrow) {
+        if (arrow == Const.SLIDE_LEFT) {
+            databus.slide_left()
+        }
+        if (arrow == Const.SLIDE_RIGHT) {
+            databus.slide_right()
+        }
+    }
 }

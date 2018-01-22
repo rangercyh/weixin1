@@ -45,7 +45,10 @@ export default class Square extends Sprite {
         this.lvl = lvl
         this.stat = stat
         this.idx = idx
+        this.row = parseInt(idx / 10)
+        this.col = idx % 10
         this.id = id
+        this.running = 0
     }
 
     check_set_idx(idx) {
@@ -57,28 +60,44 @@ export default class Square extends Sprite {
         this.x = pos.x
         this.y = pos.y
         this.idx = idx
+        this.row = parseInt(idx / 10)
+        this.col = idx % 10
     }
 
-    start_run() {
-        this.running = true
+    start_run(arrow) {
+        this.running = arrow
         // console.log('start', this.id, this.idx)
     }
 
     stop_run() {
-        this.running = false
+        this.running = 0
         // console.log('stop', this.id, this.idx)
     }
 
-    update() {
-        if (this.running) {
-            this.y += Const.MOVEING_SPEED
-            let idx = Const.PANEL.pos2idx(this.x, this.y)
-            if (idx) {
-                if (this.stat != 'PANEL') {
-                    this.stat = 'PANEL'
-                }
-                this.idx = idx
+    flush_idx() {
+        let idx = Const.PANEL.pos2idx(this.x, this.y)
+        if (idx) {
+            if (this.stat != 'PANEL') {
+                this.stat = 'PANEL'
             }
+            this.idx = idx
+            this.row = parseInt(idx / 10)
+            this.col = idx % 10
+        }
+    }
+
+    update() {
+        if (this.running == Const.RUNNING_ARROW.DOWN) {
+            this.y += Const.MOVEING_SPEED
+            this.flush_idx()
+        }
+        if (this.running == Const.RUNNING_ARROW.LEFT) {
+            this.x -= Const.MOVEING_SPEED
+            this.flush_idx()
+        }
+        if (this.running == Const.RUNNING_ARROW.RIGHT) {
+            this.x += Const.MOVEING_SPEED
+            this.flush_idx()
         }
     }
 

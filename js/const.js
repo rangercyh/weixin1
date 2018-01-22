@@ -31,6 +31,10 @@ const DIS_HEIGHT = 30
 // 边框
 const FRAME_LENGTH = 10
 
+const RUNNING_DOWN = 1
+const RUNNING_LEFT = 2
+const RUNNING_RIGHT = 3
+
 let Args = {
     SQUARE_SLIDE_LENGTH : SQUARE_SLIDE_LENGTH,
 
@@ -70,9 +74,19 @@ let Args = {
                 }
             }
         },
-        check_at_bottom(idx) {
-            let row = parseInt(idx / 10)
-            return row == this.ROW
+        check_at_bottom(idx, running) {
+            if (running == RUNNING_DOWN) {
+                let row = parseInt(idx / 10)
+                return row == this.ROW
+            }
+            if (running == RUNNING_LEFT) {
+                let col = idx % 10
+                return col == 1
+            }
+            if (running == RUNNING_RIGHT) {
+                let col = idx % 10
+                return col == this.COL
+            }
         }
     },
 
@@ -125,6 +139,15 @@ let Args = {
     MOVING_RIGHT : 2,
     MOVING_DOWN : 3,
 
+    SLIDE_LEFT : 1,
+    SLIDE_RIGHT : 2,
+
+    RUNNING_ARROW : {
+        DOWN : RUNNING_DOWN,
+        LEFT : RUNNING_LEFT,
+        RIGHT : RUNNING_RIGHT,
+    },
+
     check_in_screen : function(x, y) {
         if ((x > this.FRAME_LENGTH && x < (this.FRAME_LENGTH + this.SCREEN_WIDTH)) &&
             (y > this.FRAME_LENGTH && y < (this.FRAME_LENGTH + this.SCREEN_HEIGHT))) {
@@ -132,29 +155,106 @@ let Args = {
         }
     },
 
-    DUMP_BTN : {
-        x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
-        y : 100,
-        w : 80,
-        h : 30,
-        style : "#0aaaff",
-        font : "normal small-caps 25px arial",
-        text : "打印",
-        check_click : function(x, y) {
-            let click = (x >= this.x && x <= (this.x + this.w)) &&
-                        (y >= this.y && y <= (this.y + this.h))
-            // console.log('dump btn click', click)
-            return click
+    BTNS : {
+        DUMP_BTN : {
+            x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
+            y : 100,
+            w : 80,
+            h : 30,
+            style : "#0aaaff",
+            font : "normal small-caps 25px arial",
+            text : "打印",
+            text_x : function() {
+                return this.x + 14
+            },
+            text_y : function() {
+                return this.y + 22
+            },
+            check_click : function(x, y) {
+                let click = (x >= this.x && x <= (this.x + this.w)) &&
+                            (y >= this.y && y <= (this.y + this.h))
+                // console.log('dump btn click', click)
+                return click
+            },
+        },
+        END_BTN : {
+            x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
+            y : 200,
+            w : 80,
+            h : 30,
+            style : "#0aaaff",
+            font : "normal small-caps 25px arial",
+            text : "结束",
+            text_x : function() {
+                return this.x + 14
+            },
+            text_y : function() {
+                return this.y + 22
+            },
+            check_click : function(x, y) {
+                let click = (x >= this.x && x <= (this.x + this.w)) &&
+                            (y >= this.y && y <= (this.y + this.h))
+                // console.log('restart btn click', click)
+                return click
+            },
+        },
+        SLIDE_LEFT_BTN : {
+            x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
+            y : 300,
+            w : 80,
+            h : 30,
+            style : "#0aaaff",
+            font : "normal small-caps 25px arial",
+            text : "左倾",
+            text_x : function() {
+                return this.x + 14
+            },
+            text_y : function() {
+                return this.y + 22
+            },
+            check_click : function(x, y) {
+                let click = (x >= this.x && x <= (this.x + this.w)) &&
+                            (y >= this.y && y <= (this.y + this.h))
+                // console.log('restart btn click', click)
+                return click
+            },
+        },
+        SLIDE_RIGHT_BTN : {
+            x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
+            y : 400,
+            w : 80,
+            h : 30,
+            style : "#0aaaff",
+            font : "normal small-caps 25px arial",
+            text : "右倾",
+            text_x : function() {
+                return this.x + 14
+            },
+            text_y : function() {
+                return this.y + 22
+            },
+            check_click : function(x, y) {
+                let click = (x >= this.x && x <= (this.x + this.w)) &&
+                            (y >= this.y && y <= (this.y + this.h))
+                // console.log('restart btn click', click)
+                return click
+            },
         },
     },
     RESTART_BTN : {
-        x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
-        y : 400,
-        w : 80,
-        h : 30,
-        style : "#00FF00",
+        x : 0,
+        y : 0,
+        w : SQUARE_SLIDE_LENGTH * PRE_COL + FRAME_LENGTH * 2,
+        h : SQUARE_SLIDE_LENGTH * (PRE_ROW + PANEL_ROW) + DIS_HEIGHT + FRAME_LENGTH * 2,
+        style : "rgba(255,165,0,0.5)",
         font : "normal small-caps 25px arial",
-        text : "重置",
+        text : "GAMEOVER",
+        text_x : function() {
+            return this.x + 90
+        },
+        text_y : function() {
+            return this.y + 200
+        },
         check_click : function(x, y) {
             let click = (x >= this.x && x <= (this.x + this.w)) &&
                         (y >= this.y && y <= (this.y + this.h))

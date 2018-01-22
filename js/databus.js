@@ -28,23 +28,61 @@ export default class DataBus {
         this.touchHandler = null
         this.frame = 0
         this.score = 0
-        this.moving = false
+        this.moving = 0
         drawseq.reset()
 
         console.log('game reset')
         // 添加初始方块
-        Game.add_new_squares()
+        Game.add_new_squares(true)
 
         this.gameover = false
+        wx.startAccelerometer()
     }
 
+    slide_left() {
+        if (!(this.moving > 0)) {
+            this.lock_moving(Const.RUNNING_ARROW.LEFT)
+            console.log('slide left')
+            let squares = drawseq.get_panel_squares()
+            if (squares.length > 0) {
+                squares.forEach((v) => {
+                    v.start_run(Const.RUNNING_ARROW.LEFT)
+                })
+            } else {
+                this.unlock_moving()
+            }
+        }
+    }
+    slide_right() {
+        if (!(this.moving > 0)) {
+            this.lock_moving(Const.RUNNING_ARROW.RIGHT)
+            console.log('slide right')
+            let squares = drawseq.get_panel_squares()
+            if (squares.length > 0) {
+                squares.forEach((v) => {
+                    v.start_run(Const.RUNNING_ARROW.RIGHT)
+                })
+            } else {
+                this.unlock_moving()
+            }
+        }
+    }
     btn_dispatch(x, y) {
         if (Const.RESTART_BTN.check_click(x, y) && this.gameover) {
             console.log('gameover touch')
             this.reset()
         }
-        if (Const.DUMP_BTN.check_click(x, y)) {
+        if (Const.BTNS.DUMP_BTN.check_click(x, y)) {
             drawseq.dump()
+        }
+        if (Const.BTNS.END_BTN.check_click(x, y)) {
+            this.gameover = true
+        }
+        if (Const.BTNS.SLIDE_LEFT_BTN.check_click(x, y)) {
+            this.slide_left()
+        }
+        if (Const.BTNS.SLIDE_RIGHT_BTN.check_click(x, y)) {
+            this.slide_right()
         }
     }
 
@@ -70,7 +108,7 @@ export default class DataBus {
     }
 
     draw() {
-        drawseq.draw()
+        drawseq.draw(this)
     }
 
     initEvent() {
@@ -114,24 +152,31 @@ export default class DataBus {
 
         canvas.addEventListener('touchend', ((e) => {
             e.preventDefault()
-            if (startX && startY && move_dir) {
+            if (startX && startY && e.touches.length <= 0) {
                 startX = null
                 startY = null
-                if (!this.gameover) {
-                    Game.move_effect(this, move_dir)
+                if (!this.gameover && !this.moving) {
+                    if (move_dir) {
+                        Game.move_effect(this, move_dir)
+                    } else {
+                        // 变化pre方块
+                        Game.change_pre_squares()
+                    }
                 }
             }
         }).bind(this))
+
     }
 
-    lock_moving() {
-        this.moving = true
+    lock_moving(arrow) {
+        this.moving = arrow
     }
     unlock_moving() {
-        this.moving = false
+        this.moving = 0
     }
     game_over() {
         console.log('gameover')
+        wx.stopAccelerometer()
         this.touchHandler = this.touchEventHandler.bind(this)
         canvas.addEventListener('touchstart', this.touchHandler)
     }
