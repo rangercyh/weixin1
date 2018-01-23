@@ -67,6 +67,15 @@ export default class DataBus {
             }
         }
     }
+    slide_down() {
+        console.log('slide down')
+        let squares = drawseq.get_panel_squares()
+        if (squares.length > 0) {
+            squares.forEach((v) => {
+                v.start_run(Const.RUNNING_ARROW.DOWN)
+            })
+        }
+    }
     btn_dispatch(x, y) {
         if (Const.RESTART_BTN.check_click(x, y) && this.gameover) {
             console.log('gameover touch')
@@ -83,6 +92,9 @@ export default class DataBus {
         }
         if (Const.BTNS.SLIDE_RIGHT_BTN.check_click(x, y)) {
             this.slide_right()
+        }
+        if (Const.BTNS.SLIDE_DOWN_BTN.check_click(x, y)) {
+            this.slide_down()
         }
     }
 

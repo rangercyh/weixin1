@@ -240,6 +240,27 @@ let Args = {
                 return click
             },
         },
+        SLIDE_DOWN_BTN : {
+            x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
+            y : 600,
+            w : 80,
+            h : 30,
+            style : "#0aaaff",
+            font : "normal small-caps 25px arial",
+            text : "下倾",
+            text_x : function() {
+                return this.x + 14
+            },
+            text_y : function() {
+                return this.y + 22
+            },
+            check_click : function(x, y) {
+                let click = (x >= this.x && x <= (this.x + this.w)) &&
+                            (y >= this.y && y <= (this.y + this.h))
+                // console.log('restart btn click', click)
+                return click
+            },
+        },
     },
     RESTART_BTN : {
         x : 0,
