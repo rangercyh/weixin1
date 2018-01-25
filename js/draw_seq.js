@@ -54,25 +54,32 @@ export default class DrawSeq {
     }
 
     reset() {
-        this.squares = []
+        this.squares = new Set()
         this.square_id = 1
         this.squares_lvl_map = {}
     }
 
     add_square(lvl, idx, stat) {
-        this.squares.push(new Square(this.square_id, lvl, idx, stat))
+        this.squares.add(new Square(this.square_id, lvl, idx, stat))
         this.square_id++
         if (!this.squares_lvl_map[lvl]) {
             this.squares_lvl_map[lvl] = 0
         }
         this.squares_lvl_map[lvl] += 1
     }
+    remove_square(id) {
+        this.squares.forEach((v) => {
+            if (v.id == id) {
+                this.squares.delete(v)
+            }
+        })
+    }
 
     get_squares_map() {
         return this.squares_lvl_map
     }
     get_squares() {
-        return this.squares
+        return [...this.squares]
     }
     get_pre_squares() {
         let squares = []
@@ -92,10 +99,18 @@ export default class DrawSeq {
                 arrow = v.running
             }
         })
-        if (arrow == Const.RUNNING_ARROW.DOWN) {
+        if (arrow == Const.RUNNING_ARROW.DOWN || arrow == Const.RUNNING_ARROW.SLIDE_DOWN) {
             // 按照idx排序，由大到小
             squares.sort(function(a, b) {
-                return b.idx - a.idx
+                let a_stat = a.stat == 'PRE' && 1 || 2
+                let b_stat = b.stat == 'PRE' && 1 || 2
+                if (a_stat > b_stat) {
+                    return -1
+                } else if (a_stat == b_stat) {
+                    return b.idx - a.idx
+                } else {
+                    return 1
+                }
             })
         }
         if (arrow == Const.RUNNING_ARROW.LEFT) {

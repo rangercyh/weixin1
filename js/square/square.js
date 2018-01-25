@@ -87,7 +87,7 @@ export default class Square extends Sprite {
     }
 
     update() {
-        if (this.running == Const.RUNNING_ARROW.DOWN) {
+        if (this.running == Const.RUNNING_ARROW.DOWN || this.running == Const.RUNNING_ARROW.SLIDE_DOWN) {
             this.y += Const.MOVEING_SPEED
             this.flush_idx()
         }

@@ -68,12 +68,17 @@ export default class DataBus {
         }
     }
     slide_down() {
-        console.log('slide down')
-        let squares = drawseq.get_panel_squares()
-        if (squares.length > 0) {
-            squares.forEach((v) => {
-                v.start_run(Const.RUNNING_ARROW.DOWN)
-            })
+        if (!(this.moving > 0)) {
+            this.lock_moving(Const.RUNNING_ARROW.SLIDE_DOWN)
+            console.log('slide down')
+            let squares = drawseq.get_squares()
+            if (squares.length > 0) {
+                squares.forEach((v) => {
+                    v.start_run(Const.RUNNING_ARROW.SLIDE_DOWN)
+                })
+            } else {
+                this.unlock_moving()
+            }
         }
     }
     btn_dispatch(x, y) {

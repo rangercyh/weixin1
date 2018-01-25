@@ -16,6 +16,8 @@
 // 方块边长
 const SQUARE_SLIDE_LENGTH = 50
 const MOVEING_SPEED = SQUARE_SLIDE_LENGTH / 5
+const DISAPPEAR_NUM = 3
+const Max_Square_Lvl = 8
 
 // panel区域
 const PANEL_ROW = 7
@@ -34,6 +36,7 @@ const FRAME_LENGTH = 10
 const RUNNING_DOWN = 1
 const RUNNING_LEFT = 2
 const RUNNING_RIGHT = 3
+const RUNNING_SLIDE_DOWN = 4
 
 let Args = {
     SQUARE_SLIDE_LENGTH : SQUARE_SLIDE_LENGTH,
@@ -75,7 +78,7 @@ let Args = {
             }
         },
         check_at_bottom(idx, running) {
-            if (running == RUNNING_DOWN) {
+            if (running == RUNNING_DOWN || running == RUNNING_SLIDE_DOWN) {
                 let row = parseInt(idx / 10)
                 return row == this.ROW
             }
@@ -142,10 +145,14 @@ let Args = {
     SLIDE_LEFT : 1,
     SLIDE_RIGHT : 2,
 
+    Max_Square_Lvl : Max_Square_Lvl,
+    DISAPPEAR_NUM : DISAPPEAR_NUM,
+
     RUNNING_ARROW : {
         DOWN : RUNNING_DOWN,
         LEFT : RUNNING_LEFT,
         RIGHT : RUNNING_RIGHT,
+        SLIDE_DOWN : RUNNING_SLIDE_DOWN,
     },
 
     check_in_screen : function(x, y) {
