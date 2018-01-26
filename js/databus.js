@@ -29,6 +29,7 @@ export default class DataBus {
         this.frame = 0
         this.score = 0
         this.moving = 0
+        this.moving_check = false
         drawseq.reset()
 
         console.log('game reset')
@@ -187,9 +188,11 @@ export default class DataBus {
 
     lock_moving(arrow) {
         this.moving = arrow
+        this.moving_check = true
     }
     unlock_moving() {
         this.moving = 0
+        this.moving_check = false
     }
     game_over() {
         console.log('gameover')

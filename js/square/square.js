@@ -50,6 +50,15 @@ export default class Square extends Sprite {
             this.row = parseInt(idx / 10)
             this.col = idx % 10
         }
+        idx = Const.PRE.pos2idx(this.x, this.y)
+        if (idx) {
+            if (this.stat != 'PRE') {
+                this.stat = 'PRE'
+            }
+            this.idx = idx
+            this.row = parseInt(idx / 10)
+            this.col = idx % 10
+        }
     }
 
     update() {

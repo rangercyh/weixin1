@@ -10,13 +10,24 @@ let init_squares = {
     lvl : 1,
     stat : 'PRE',
 }
+// let test_squares = {
+//     idx : [73, 74, 63, 64, 53, 54, 43, 44, 33, 34, 23, 24, 13],
+//     lvl:  [ 1,  1,  2,  2,  3,  3,  4,  4,  5,  5,  2,  2,  1],
+//     stat : 'PANEL',
+// }
 // 初始化最开始的squares
 export function add_new_squares(init) {
     if (init) {
         init_squares.idx.forEach((v) => {
             drawseq.add_square(init_squares.lvl, v, init_squares.stat)
         })
+        // for (let i = 0; i < test_squares.idx.length; i++) {
+        //     drawseq.add_square(test_squares.lvl[i], test_squares.idx[i], test_squares.stat)
+        // }
     } else {
+        // init_squares.idx.forEach((v) => {
+        //     drawseq.add_square(init_squares.lvl, v, init_squares.stat)
+        // })
         let map = drawseq.get_squares_map()
         let key_arr = []
         let val_arr = []
@@ -129,11 +140,15 @@ function get_near_square_id(square, panel_squares, pre_squares) {
     let check_arr = []
     check_arr.push(square)
     near_ids.add(square.id)
-    // console.log('====== push', square.id)
     while (check_arr.length > 0) {
         let s = check_arr.pop()
         for (let i = 0; i < f1.length; i++) {
-            let tr = (s.stat == 'PANEL') && (s.row + f1[i]) || (s.row - Const.PRE.ROW + f1[i])
+            let tr
+            if (s.stat == 'PANEL') {
+                tr = s.row + f1[i]
+            } else {
+                tr = s.row - Const.PRE.ROW + f1[i]
+            }
             let tc = s.col + f2[i]
             for (let j = 0; j < panel_squares.length; j++) {
                 if (!near_ids.has(panel_squares[j].id) && panel_squares[j].row == tr && panel_squares[j].col == tc && panel_squares[j].lvl == s.lvl) {
@@ -220,19 +235,21 @@ export function game_update(databus) {
         })
     } else {
         // 全部都stop之后做检查和变换
-        if (!transform_squares(databus, databus.moving)) { // 没有变化
-            if (databus.moving == Const.RUNNING_ARROW.DOWN || databus.moving == Const.RUNNING_ARROW.SLIDE_DOWN) {
-                // 检查是否gameover
-                if (check_gameover()) {
-                    databus.gameover = true
-                    return
+        if (databus.moving_check) {
+            if (!transform_squares(databus, databus.moving)) { // 没有变化
+                if (databus.moving == Const.RUNNING_ARROW.DOWN || databus.moving == Const.RUNNING_ARROW.SLIDE_DOWN) {
+                    // 检查是否gameover
+                    if (check_gameover()) {
+                        databus.gameover = true
+                        return
+                    }
+                    // 产生新的pre方块
+                    add_new_squares()
                 }
-                // 产生新的pre方块
-                add_new_squares()
+                databus.unlock_moving()
+            } else {
+                databus.slide_mark = true
             }
-            databus.unlock_moving()
-        } else {
-            databus.slide_mark = true
         }
     }
 }
