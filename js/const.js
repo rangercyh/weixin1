@@ -206,8 +206,9 @@ let Args = {
             },
         },
         SLIDE_LEFT_BTN : {
-            x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
-            y : 300,
+            // x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
+            x : 4 * FRAME_LENGTH + 10,
+            y : SQUARE_SLIDE_LENGTH * (PRE_ROW + PANEL_ROW) + DIS_HEIGHT + 30,
             w : 80,
             h : 30,
             style : "#0aaaff",
@@ -227,8 +228,9 @@ let Args = {
             },
         },
         SLIDE_RIGHT_BTN : {
-            x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
-            y : 400,
+            // x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
+            x : 4 * FRAME_LENGTH + 120,
+            y : SQUARE_SLIDE_LENGTH * (PRE_ROW + PANEL_ROW) + DIS_HEIGHT + 30,
             w : 80,
             h : 30,
             style : "#0aaaff",
@@ -249,7 +251,7 @@ let Args = {
         },
         SLIDE_DOWN_BTN : {
             x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
-            y : 600,
+            y : 400,
             w : 80,
             h : 30,
             style : "#0aaaff",

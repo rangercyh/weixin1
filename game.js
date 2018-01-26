@@ -18,9 +18,9 @@ wx.onAccelerometerChange(function(res) {
     // }
     // last_x = res.x
     if ((res.x >= 0 && res.x <= 1) && (res.y >= -0.8 && res.y < 0)) {  // 右倾
-        main.slide(Const.SLIDE_RIGHT)
+        // main.slide(Const.SLIDE_RIGHT)
     }
     if ((res.x >= -1 && res.x <= 0) && (res.y >= -0.9 && res.y < 0)) {  // 左倾
-        main.slide(Const.SLIDE_LEFT)
+        // main.slide(Const.SLIDE_LEFT)
     }
 })
