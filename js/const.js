@@ -290,6 +290,48 @@ let Args = {
             return click
         },
     },
+    Squares_Cfg : {
+        1 : {
+            img : 'images/1.png',
+            tar : 2,
+            score : 10,
+        },
+        2 : {
+            img : 'images/2.png',
+            tar : 3,
+            score : 100,
+        },
+        3 : {
+            img : 'images/3.png',
+            tar : 4,
+            score : 200,
+        },
+        4 : {
+            img : 'images/4.png',
+            tar : 5,
+            score : 400,
+        },
+        5 : {
+            img : 'images/5.png',
+            tar : 6,
+            score : 800,
+        },
+        6 : {
+            img : 'images/6.png',
+            tar : 7,
+            score : 2000,
+        },
+        7 : {
+            img : 'images/7.png',
+            tar : 8,
+            score : 4000,
+        },
+        8 : {
+            img : 'images/8.png',
+            tar : null,
+            score : 10000,
+        }
+    }
 }
 
 console.log(Args.SCREEN_WIDTH, Args.SCREEN_HEIGHT)

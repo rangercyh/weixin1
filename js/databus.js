@@ -40,66 +40,62 @@ export default class DataBus {
     }
 
     slide_left() {
-        if (!(this.moving > 0)) {
-            this.lock_moving(Const.RUNNING_ARROW.LEFT)
-            console.log('slide left')
-            let squares = drawseq.get_panel_squares()
-            if (squares.length > 0) {
-                squares.forEach((v) => {
-                    v.start_run(Const.RUNNING_ARROW.LEFT)
-                })
-            } else {
-                this.unlock_moving()
-            }
+        this.lock_moving(Const.RUNNING_ARROW.LEFT)
+        console.log('slide left')
+        let squares = drawseq.get_panel_squares()
+        if (squares.length > 0) {
+            squares.forEach((v) => {
+                v.start_run(Const.RUNNING_ARROW.LEFT)
+            })
+        } else {
+            this.unlock_moving()
         }
     }
     slide_right() {
-        if (!(this.moving > 0)) {
-            this.lock_moving(Const.RUNNING_ARROW.RIGHT)
-            console.log('slide right')
-            let squares = drawseq.get_panel_squares()
-            if (squares.length > 0) {
-                squares.forEach((v) => {
-                    v.start_run(Const.RUNNING_ARROW.RIGHT)
-                })
-            } else {
-                this.unlock_moving()
-            }
+        this.lock_moving(Const.RUNNING_ARROW.RIGHT)
+        console.log('slide right')
+        let squares = drawseq.get_panel_squares()
+        if (squares.length > 0) {
+            squares.forEach((v) => {
+                v.start_run(Const.RUNNING_ARROW.RIGHT)
+            })
+        } else {
+            this.unlock_moving()
         }
     }
     slide_down() {
-        if (!(this.moving > 0)) {
-            this.lock_moving(Const.RUNNING_ARROW.SLIDE_DOWN)
-            console.log('slide down')
-            let squares = drawseq.get_squares()
-            if (squares.length > 0) {
-                squares.forEach((v) => {
-                    v.start_run(Const.RUNNING_ARROW.SLIDE_DOWN)
-                })
-            } else {
-                this.unlock_moving()
-            }
+        this.lock_moving(Const.RUNNING_ARROW.SLIDE_DOWN)
+        console.log('slide down')
+        let squares = drawseq.get_squares()
+        if (squares.length > 0) {
+            squares.forEach((v) => {
+                v.start_run(Const.RUNNING_ARROW.SLIDE_DOWN)
+            })
+        } else {
+            this.unlock_moving()
         }
     }
     btn_dispatch(x, y) {
+        if (Const.BTNS.DUMP_BTN.check_click(x, y)) {
+            drawseq.dump()
+        }
         if (Const.RESTART_BTN.check_click(x, y) && this.gameover) {
             console.log('gameover touch')
             this.reset()
         }
-        if (Const.BTNS.DUMP_BTN.check_click(x, y)) {
-            drawseq.dump()
-        }
         if (Const.BTNS.END_BTN.check_click(x, y)) {
             this.gameover = true
         }
-        if (Const.BTNS.SLIDE_LEFT_BTN.check_click(x, y)) {
-            this.slide_left()
-        }
-        if (Const.BTNS.SLIDE_RIGHT_BTN.check_click(x, y)) {
-            this.slide_right()
-        }
-        if (Const.BTNS.SLIDE_DOWN_BTN.check_click(x, y)) {
-            this.slide_down()
+        if (!this.moving > 0) {
+            if (Const.BTNS.SLIDE_LEFT_BTN.check_click(x, y)) {
+                this.slide_left()
+            }
+            if (Const.BTNS.SLIDE_RIGHT_BTN.check_click(x, y)) {
+                this.slide_right()
+            }
+            if (Const.BTNS.SLIDE_DOWN_BTN.check_click(x, y)) {
+                this.slide_down()
+            }
         }
     }
 
@@ -122,6 +118,10 @@ export default class DataBus {
         this.frame++
         Game.game_update(this)
         drawseq.update()
+        if (this.slide_mark) {
+            this.slide_mark = false
+            this.slide_down()
+        }
     }
 
     draw() {
@@ -196,5 +196,9 @@ export default class DataBus {
         wx.stopAccelerometer()
         this.touchHandler = this.touchEventHandler.bind(this)
         canvas.addEventListener('touchstart', this.touchHandler)
+    }
+    add_score(lvl) {
+        let score = Const.Squares_Cfg[lvl].score
+        this.score += score
     }
 }

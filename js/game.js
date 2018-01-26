@@ -102,13 +102,13 @@ function check_touch_square(v1, v2) {
 function check_stop(square, panel_list) {
     // 检查是否触边
     if ((square.stat == 'PANEL') && Const.PANEL.check_at_bottom(square.idx, square.running)) {
-        console.log('触边', square.id, square.running)
+        console.log('触边', square.id, square.idx, square.running)
         return true
     }
     // 检查是否触及别的非running方块
     for (let v of panel_list) {
         if (!(v.running > 0) && check_touch_square(square, v)) {
-            console.log('触块', square.id, square.running)
+            console.log('触块', square.id, square.idx, square.running)
             return true
         }
     }
@@ -123,9 +123,39 @@ function check_gameover() {
 }
 
 function get_near_square_id(square, panel_squares, pre_squares) {
-    let near_ids = []
-
-    return near_ids
+    let near_ids = new Set()
+    let f1 = [-1, 1, 0, 0] // 上下左右
+    let f2 = [0, 0, -1, 1]
+    let check_arr = []
+    check_arr.push(square)
+    near_ids.add(square.id)
+    // console.log('====== push', square.id)
+    while (check_arr.length > 0) {
+        let s = check_arr.pop()
+        for (let i = 0; i < f1.length; i++) {
+            let tr = (s.stat == 'PANEL') && (s.row + f1[i]) || (s.row - Const.PRE.ROW + f1[i])
+            let tc = s.col + f2[i]
+            for (let j = 0; j < panel_squares.length; j++) {
+                if (!near_ids.has(panel_squares[j].id) && panel_squares[j].row == tr && panel_squares[j].col == tc && panel_squares[j].lvl == s.lvl) {
+                    check_arr.push(panel_squares[j])
+                    near_ids.add(panel_squares[j].id)
+                    // console.log('====== push', panel_squares[j].id)
+                    break
+                }
+            }
+            for (let j = 0; j < pre_squares.length; j++) {
+                let row = pre_squares[j].row - Const.PRE.ROW
+                if (!near_ids.has(pre_squares[j].id) && row == tr && pre_squares[j].col == tc && pre_squares[j].lvl == s.lvl) {
+                    check_arr.push(pre_squares[j])
+                    near_ids.add(pre_squares[j].id)
+                    // console.log('====== push', pre_squares[j].id)
+                    break
+                }
+            }
+        }
+    }
+    // console.log(near_ids)
+    return [...near_ids]
 }
 
 function transform_squares(databus, moving) {
@@ -150,7 +180,7 @@ function transform_squares(databus, moving) {
                     dis_tb.push({
                         start : v.idx,
                         dis : near_ids,
-                        lvl : v.lvl,
+                        lvl : v.lvl + 1,
                     })
                 }
                 near_ids.forEach((id) => {
@@ -163,9 +193,10 @@ function transform_squares(databus, moving) {
                 v.dis.forEach((id) => {
                     drawseq.remove_square(id)
                 })
-                drawseq.add_square(v.lvl + 1, v.start, 'PANEL')
+                drawseq.add_square(v.lvl, v.start, 'PANEL')
+                databus.add_score(v.lvl)
             })
-            databus.slide_down()
+            // databus.slide_down()
             return true
         }
     }
@@ -200,9 +231,10 @@ export function game_update(databus) {
                 add_new_squares()
             }
             databus.unlock_moving()
+        } else {
+            databus.slide_mark = true
         }
     }
-    return false
 }
 
 export function change_pre_squares() {
@@ -210,17 +242,29 @@ export function change_pre_squares() {
     if (pre_squares.length == init_squares.idx.length) {
         let a = pre_squares[0]
         let b = pre_squares[1]
-        if (a.row != b.row) {   // 同列
-            if (a.id < b.id) {
-                b.set_idx(a.row * 10 + a.col + 1)
+        if (a.row == b.row) {
+            if (a.col < b.col) {
+                b.set_idx(a.row * 10 + a.col)
+                a.set_idx((a.row - 1) * 10 + a.col)
             } else {
-                a.set_idx(b.row * 10 + b.col + 1)
+                a.set_idx(b.row * 10 + b.col)
+                b.set_idx((b.row - 1) * 10 + b.col)
             }
         } else {
-            if (a.id < b.id) {
-                b.set_idx((a.row - 1) * 10 + a.col)
+            if (a.row < b.row) {
+                if (a.col == Const.PRE.COL) {
+                    a.set_idx(b.row * 10 + b.col)
+                    b.set_idx(b.row * 10 + b.col - 1)
+                } else {
+                    a.set_idx(b.row * 10 + b.col + 1)
+                }
             } else {
-                a.set_idx((b.row - 1) * 10 + b.col)
+                if (a.col == Const.PRE.COL) {
+                    b.set_idx(a.row * 10 + a.col)
+                    a.set_idx(a.row * 10 + a.col - 1)
+                } else {
+                    b.set_idx(a.row * 10 + a.col + 1)
+                }
             }
         }
     }
