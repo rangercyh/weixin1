@@ -68,6 +68,11 @@ export default class Square extends Sprite {
     }
 
     draw() {
+        let ctx = canvas.getContext('2d')
         this.drawToCanvas(this.x, this.y)
+        ctx.save()
+        ctx.font = "#ffffff"
+        ctx.fillText(this.lvl, this.x + 25, this.y + 30)
+        ctx.restore()
     }
 }

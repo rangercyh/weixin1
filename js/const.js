@@ -207,7 +207,7 @@ let Args = {
         },
         SLIDE_LEFT_BTN : {
             // x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
-            x : 4 * FRAME_LENGTH + 10,
+            x : 1 * FRAME_LENGTH,
             y : SQUARE_SLIDE_LENGTH * (PRE_ROW + PANEL_ROW) + DIS_HEIGHT + 30,
             w : 80,
             h : 30,
@@ -229,7 +229,7 @@ let Args = {
         },
         SLIDE_RIGHT_BTN : {
             // x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
-            x : 4 * FRAME_LENGTH + 120,
+            x : 22 * FRAME_LENGTH,
             y : SQUARE_SLIDE_LENGTH * (PRE_ROW + PANEL_ROW) + DIS_HEIGHT + 30,
             w : 80,
             h : 30,
@@ -250,13 +250,14 @@ let Args = {
             },
         },
         SLIDE_DOWN_BTN : {
-            x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
-            y : 400,
+            // x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
+            x : 11 * FRAME_LENGTH,
+            y : SQUARE_SLIDE_LENGTH * (PRE_ROW + PANEL_ROW) + DIS_HEIGHT + 30,
             w : 80,
             h : 30,
             style : "#0aaaff",
             font : "normal small-caps 25px arial",
-            text : "下倾",
+            text : "下落",
             text_x : function() {
                 return this.x + 14
             },
