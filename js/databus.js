@@ -87,7 +87,7 @@ export default class DataBus {
         if (Const.BTNS.END_BTN.check_click(x, y)) {
             this.gameover = true
         }
-        if (!this.moving > 0) {
+        if (!this.gameover && !(this.moving > 0)) {
             if (Const.BTNS.SLIDE_LEFT_BTN.check_click(x, y)) {
                 this.slide_left()
             }
@@ -131,6 +131,9 @@ export default class DataBus {
 
     initEvent() {
         canvas.addEventListener('touchstart', ((e) => {
+            if (this.gameover) {
+                return
+            }
             e.preventDefault()
             if (!this.moving && e.touches.length == 1) {
                 let x = e.touches[0].clientX
@@ -146,6 +149,9 @@ export default class DataBus {
         }).bind(this))
 
         canvas.addEventListener('touchmove', ((e) => {
+            if (this.gameover) {
+                return
+            }
             e.preventDefault()
             if (startX && startY && e.touches.length == 1) {
                 let x = e.touches[0].clientX
@@ -169,6 +175,9 @@ export default class DataBus {
         }).bind(this))
 
         canvas.addEventListener('touchend', ((e) => {
+            if (this.gameover) {
+                return
+            }
             e.preventDefault()
             if (startX && startY && e.touches.length <= 0) {
                 startX = null
