@@ -64,10 +64,15 @@ export default class DataBus {
             this.unlock_moving()
         }
     }
-    slide_down() {
+    slide_down(all) {
         this.lock_moving(Const.RUNNING_ARROW.SLIDE_DOWN)
         console.log('slide down')
-        let squares = drawseq.get_squares()
+        let squares
+        if (all) {
+            squares = drawseq.get_squares()
+        } else {
+            squares = drawseq.get_panel_squares()
+        }
         if (squares.length > 0) {
             squares.forEach((v) => {
                 v.start_run(Const.RUNNING_ARROW.SLIDE_DOWN)
@@ -95,7 +100,8 @@ export default class DataBus {
                 this.slide_right()
             }
             if (Const.BTNS.SLIDE_DOWN_BTN.check_click(x, y)) {
-                this.slide_down()
+                this.old_moving = Const.RUNNING_ARROW.DOWN
+                this.slide_down(true)
             }
         }
     }
@@ -118,10 +124,11 @@ export default class DataBus {
         }
         this.frame++
         Game.game_update(this)
-        drawseq.update()
+        drawseq.update(this.score)
         if (this.slide_mark) {
+            this.slide_down(this.slide_all)
             this.slide_mark = false
-            this.slide_down()
+            this.slide_all = false
         }
     }
 
@@ -209,8 +216,8 @@ export default class DataBus {
         this.touchHandler = this.touchEventHandler.bind(this)
         canvas.addEventListener('touchstart', this.touchHandler)
     }
-    add_score(lvl) {
-        let score = Const.Squares_Cfg[lvl].score
+    add_score(score) {
         this.score += score
+        console.log('add score = ', score)
     }
 }

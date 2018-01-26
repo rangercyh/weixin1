@@ -14,17 +14,20 @@
 */
 
 // 方块边长
+const SQUARE_START_X = 50
 const SQUARE_SLIDE_LENGTH = 50
+const FRUIT_SLIDE_LENGTH = 40
 const MOVEING_SPEED = SQUARE_SLIDE_LENGTH / 5
 const DISAPPEAR_NUM = 3
-const Max_Square_Lvl = 8
+const Max_Square_Lvl = 10
+const SQUARE_SCORE = 4
 
 // panel区域
 const PANEL_ROW = 7
 const PANEL_COL = 6
 
 // 预准备区域
-const PRE_ROW = 2
+const PRE_ROW = 3
 const PRE_COL = 6
 
 // 分界
@@ -38,22 +41,35 @@ const RUNNING_LEFT = 2
 const RUNNING_RIGHT = 3
 const RUNNING_SLIDE_DOWN = 4
 
+let Square_Map = new Map()
+for (let i = 1; i <= Max_Square_Lvl; i++) {
+    let tar = i + 1
+    if (tar > Max_Square_Lvl) {
+        tar = null
+    }
+    Square_Map.set(i, {
+        img : 'images/' + i + '.png',
+        tar : tar,
+    })
+}
+
 let Args = {
     SQUARE_SLIDE_LENGTH : SQUARE_SLIDE_LENGTH,
+    SQUARE_START_X : SQUARE_START_X,
 
     PANEL : {
         ROW : PANEL_ROW,
         COL : PANEL_COL,
         WIDTH : SQUARE_SLIDE_LENGTH * PANEL_COL,
         HEIGHT : SQUARE_SLIDE_LENGTH * PANEL_ROW,
-        X : FRAME_LENGTH,
+        X : FRAME_LENGTH + SQUARE_START_X,
         Y : FRAME_LENGTH + SQUARE_SLIDE_LENGTH * PRE_ROW + DIS_HEIGHT,
         idx2pos : function(idx) {
             let row = parseInt(idx / 10)
             let col = idx % 10
 
             return {
-                x : FRAME_LENGTH + (col - 1) * SQUARE_SLIDE_LENGTH,
+                x : SQUARE_START_X + FRAME_LENGTH + (col - 1) * SQUARE_SLIDE_LENGTH,
                 y : FRAME_LENGTH + DIS_HEIGHT + (PRE_ROW + row - 1) * SQUARE_SLIDE_LENGTH,
             }
         },
@@ -98,14 +114,14 @@ let Args = {
         COL : PRE_COL,
         WIDTH : SQUARE_SLIDE_LENGTH * PRE_COL,
         HEIGHT : SQUARE_SLIDE_LENGTH * PRE_ROW,
-        X : FRAME_LENGTH,
+        X : FRAME_LENGTH + SQUARE_START_X,
         Y : FRAME_LENGTH,
         idx2pos : function(idx) {
             let row = parseInt(idx / 10)
             let col = idx % 10
 
             return {
-                x : FRAME_LENGTH + (col - 1) * SQUARE_SLIDE_LENGTH,
+                x : SQUARE_START_X + FRAME_LENGTH + (col - 1) * SQUARE_SLIDE_LENGTH,
                 y : FRAME_LENGTH + (row - 1) * SQUARE_SLIDE_LENGTH,
             }
         },
@@ -156,7 +172,7 @@ let Args = {
     },
 
     check_in_screen : function(x, y) {
-        if ((x > this.FRAME_LENGTH && x < (this.FRAME_LENGTH + this.SCREEN_WIDTH)) &&
+        if ((x > (this.FRAME_LENGTH + this.SQUARE_START_X) && x < (this.FRAME_LENGTH + this.SQUARE_START_X + this.SCREEN_WIDTH)) &&
             (y > this.FRAME_LENGTH && y < (this.FRAME_LENGTH + this.SCREEN_HEIGHT))) {
             return true
         }
@@ -164,7 +180,7 @@ let Args = {
 
     BTNS : {
         DUMP_BTN : {
-            x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
+            x : SQUARE_START_X + SQUARE_SLIDE_LENGTH * PRE_COL + FRAME_LENGTH * 2 + 10,
             y : 100,
             w : 80,
             h : 30,
@@ -185,7 +201,7 @@ let Args = {
             },
         },
         END_BTN : {
-            x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
+            x : SQUARE_START_X + SQUARE_SLIDE_LENGTH * PRE_COL + FRAME_LENGTH * 2 + 10,
             y : 200,
             w : 80,
             h : 30,
@@ -207,8 +223,8 @@ let Args = {
         },
         SLIDE_LEFT_BTN : {
             // x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
-            x : 1 * FRAME_LENGTH,
-            y : SQUARE_SLIDE_LENGTH * (PRE_ROW + PANEL_ROW) + DIS_HEIGHT + 30,
+            x : SQUARE_START_X + FRAME_LENGTH + (SQUARE_SLIDE_LENGTH * PRE_COL) / 3 * 0,
+            y : SQUARE_SLIDE_LENGTH * (PRE_ROW + PANEL_ROW) + DIS_HEIGHT + FRAME_LENGTH * 2 + 10,
             w : 80,
             h : 30,
             style : "#0aaaff",
@@ -218,7 +234,7 @@ let Args = {
                 return this.x + 14
             },
             text_y : function() {
-                return this.y + 22
+                return this.y + 24
             },
             check_click : function(x, y) {
                 let click = (x >= this.x && x <= (this.x + this.w)) &&
@@ -229,8 +245,8 @@ let Args = {
         },
         SLIDE_RIGHT_BTN : {
             // x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
-            x : 22 * FRAME_LENGTH,
-            y : SQUARE_SLIDE_LENGTH * (PRE_ROW + PANEL_ROW) + DIS_HEIGHT + 30,
+            x : SQUARE_START_X + FRAME_LENGTH + (SQUARE_SLIDE_LENGTH * PRE_COL) / 3 * 2,
+            y : SQUARE_SLIDE_LENGTH * (PRE_ROW + PANEL_ROW) + DIS_HEIGHT + FRAME_LENGTH * 2 + 10,
             w : 80,
             h : 30,
             style : "#0aaaff",
@@ -240,7 +256,7 @@ let Args = {
                 return this.x + 14
             },
             text_y : function() {
-                return this.y + 22
+                return this.y + 24
             },
             check_click : function(x, y) {
                 let click = (x >= this.x && x <= (this.x + this.w)) &&
@@ -251,8 +267,8 @@ let Args = {
         },
         SLIDE_DOWN_BTN : {
             // x : SQUARE_SLIDE_LENGTH * PRE_COL + 2 * FRAME_LENGTH + 10,
-            x : 11 * FRAME_LENGTH,
-            y : SQUARE_SLIDE_LENGTH * (PRE_ROW + PANEL_ROW) + DIS_HEIGHT + 30,
+            x : SQUARE_START_X + FRAME_LENGTH + (SQUARE_SLIDE_LENGTH * PRE_COL) / 3 * 1,
+            y : SQUARE_SLIDE_LENGTH * (PRE_ROW + PANEL_ROW) + DIS_HEIGHT + FRAME_LENGTH * 2 + 10,
             w : 80,
             h : 30,
             style : "#0aaaff",
@@ -262,7 +278,7 @@ let Args = {
                 return this.x + 14
             },
             text_y : function() {
-                return this.y + 22
+                return this.y + 24
             },
             check_click : function(x, y) {
                 let click = (x >= this.x && x <= (this.x + this.w)) &&
@@ -273,7 +289,7 @@ let Args = {
         },
     },
     RESTART_BTN : {
-        x : 0,
+        x : SQUARE_START_X,
         y : 0,
         w : SQUARE_SLIDE_LENGTH * PRE_COL + FRAME_LENGTH * 2,
         h : SQUARE_SLIDE_LENGTH * (PRE_ROW + PANEL_ROW) + DIS_HEIGHT + FRAME_LENGTH * 2,
@@ -293,50 +309,31 @@ let Args = {
             return click
         },
     },
-    Squares_Cfg : {
-        1 : {
-            img : 'images/1.png',
-            tar : 2,
-            score : 10,
-        },
-        2 : {
-            img : 'images/2.png',
-            tar : 3,
-            score : 100,
-        },
-        3 : {
-            img : 'images/3.png',
-            tar : 4,
-            score : 200,
-        },
-        4 : {
-            img : 'images/4.png',
-            tar : 5,
-            score : 400,
-        },
-        5 : {
-            img : 'images/5.png',
-            tar : 6,
-            score : 800,
-        },
-        6 : {
-            img : 'images/6.png',
-            tar : 7,
-            score : 2000,
-        },
-        7 : {
-            img : 'images/7.png',
-            tar : 8,
-            score : 4000,
-        },
-        8 : {
-            img : 'images/8.png',
-            tar : null,
-            score : 10000,
-        }
-    }
-}
+    Squares_Cfg : Square_Map,
 
-console.log(Args.SCREEN_WIDTH, Args.SCREEN_HEIGHT)
+    SQUARE_SCORE : SQUARE_SCORE,
+
+    init_squares : {
+        idx : [33, 34],
+        lvl : 1,
+        stat : 'PRE',
+    },
+
+    SCORE_ARENA : {
+        x : SQUARE_START_X + FRAME_LENGTH + PRE_COL / 3 * SQUARE_SLIDE_LENGTH,
+        y : FRAME_LENGTH,
+        w : SQUARE_SLIDE_LENGTH * 2,
+        h : SQUARE_SLIDE_LENGTH,
+        style : "rgba(255,165,0,0.5)",
+        font : "normal small-caps 40px arial",
+        text_x : function() {
+            return this.x + 5
+        },
+        text_y : function() {
+            return this.y + 40
+        },
+    },
+    FRUIT_SLIDE_LENGTH : FRUIT_SLIDE_LENGTH,
+}
 
 export default Args

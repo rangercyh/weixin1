@@ -1,17 +1,18 @@
 import Const from './const'
 import Sprite from './base/sprite'
 import Square from './square/square'
+import Fruit from './square/fruit'
 
 let ctx = canvas.getContext('2d')
 
 let instance
 
 let draw_frames = function(canvas_ctx = ctx) {
-    canvas_ctx.fillRect(0, 0, Const.FRAME_LENGTH, Const.SCREEN_HEIGHT + Const.FRAME_LENGTH * 2)
-    canvas_ctx.fillRect(Const.FRAME_LENGTH + Const.PANEL.WIDTH, 0, Const.FRAME_LENGTH, Const.SCREEN_HEIGHT + Const.FRAME_LENGTH * 2)
-    canvas_ctx.fillRect(Const.FRAME_LENGTH, 0, Const.PANEL.WIDTH, Const.FRAME_LENGTH)
-    canvas_ctx.fillRect(Const.FRAME_LENGTH, Const.SCREEN_HEIGHT + Const.FRAME_LENGTH, Const.PANEL.WIDTH, Const.FRAME_LENGTH)
-    canvas_ctx.fillRect(Const.FRAME_LENGTH, Const.FRAME_LENGTH + Const.PRE.HEIGHT, Const.PANEL.WIDTH, Const.DIS_HEIGHT)
+    canvas_ctx.fillRect(Const.SQUARE_START_X, 0, Const.FRAME_LENGTH, Const.SCREEN_HEIGHT + Const.FRAME_LENGTH * 2)
+    canvas_ctx.fillRect(Const.SQUARE_START_X + Const.FRAME_LENGTH + Const.PANEL.WIDTH, 0, Const.FRAME_LENGTH, Const.SCREEN_HEIGHT + Const.FRAME_LENGTH * 2)
+    canvas_ctx.fillRect(Const.SQUARE_START_X + Const.FRAME_LENGTH, 0, Const.PANEL.WIDTH, Const.FRAME_LENGTH)
+    canvas_ctx.fillRect(Const.SQUARE_START_X + Const.FRAME_LENGTH, Const.SCREEN_HEIGHT + Const.FRAME_LENGTH, Const.PANEL.WIDTH, Const.FRAME_LENGTH)
+    canvas_ctx.fillRect(Const.SQUARE_START_X + Const.FRAME_LENGTH, Const.FRAME_LENGTH + Const.PRE.HEIGHT, Const.PANEL.WIDTH, Const.DIS_HEIGHT)
 }
 
 let draw_buttons = function(canvas_ctx = ctx) {
@@ -39,6 +40,34 @@ let draw_gameover = function(score, canvas_ctx = ctx) {
     canvas_ctx.restore()
 }
 
+let draw_fruits = function(lvl_map, canvas_ctx = ctx) {
+    let start_x = 5
+    canvas_ctx.clearRect(start_x, 0, Const.FRUIT_SLIDE_LENGTH, Const.SCREEN_HEIGHT + Const.FRAME_LENGTH)
+    let fruits = Const.Squares_Cfg
+    for (let [key, value] of fruits) {
+        let alpha = 0.3
+        if (lvl_map.has(key)) {
+            alpha = 1
+        }
+        canvas_ctx.save()
+        canvas_ctx.globalAlpha = alpha
+        let fruit = new Fruit(key)
+        fruit.draw(start_x, Const.SCREEN_HEIGHT + Const.FRAME_LENGTH - key * Const.FRUIT_SLIDE_LENGTH, canvas_ctx)
+        canvas_ctx.restore()
+    }
+}
+
+let draw_score = function(score, canvas_ctx = ctx) {
+    canvas_ctx.save()
+    canvas_ctx.fillStyle = Const.SCORE_ARENA.style
+    canvas_ctx.fillRect(Const.SCORE_ARENA.x, Const.SCORE_ARENA.y, Const.SCORE_ARENA.w, Const.SCORE_ARENA.h)
+    canvas_ctx.restore()
+    canvas_ctx.save()
+    canvas_ctx.font = Const.SCORE_ARENA.font
+    canvas_ctx.fillText(score, Const.SCORE_ARENA.text_x(), Const.SCORE_ARENA.text_y())
+    canvas_ctx.restore()
+}
+
 /**
  * 界面绘图器
  */
@@ -56,16 +85,18 @@ export default class DrawSeq {
     reset() {
         this.squares = new Set()
         this.square_id = 1
-        this.squares_lvl_map = {}
+        this.squares_lvl_map = new Map()
+        this.score = 0
     }
 
     add_square(lvl, idx, stat) {
         this.squares.add(new Square(this.square_id, lvl, idx, stat))
         this.square_id++
-        if (!this.squares_lvl_map[lvl]) {
-            this.squares_lvl_map[lvl] = 0
+        if (!this.squares_lvl_map.has(lvl)) {
+            this.squares_lvl_map.set(lvl, 0)
         }
-        this.squares_lvl_map[lvl] += 1
+        let num = this.squares_lvl_map.get(lvl)
+        this.squares_lvl_map.set(lvl, num + 1)
     }
     remove_square(id) {
         this.squares.forEach((v) => {
@@ -186,18 +217,19 @@ export default class DrawSeq {
         console.log(str)
     }
 
-    update() {
+    update(score) {
         this.squares.forEach((v) => {
             v.update()
         })
+        this.score = score
     }
 
     draw(databus) {
         // 清除画布
-        ctx.clearRect(0, 0, Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT)
+        ctx.clearRect(Const.SQUARE_START_X, 0, Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT)
 
         // 画背景
-        this.bg.drawToCanvas(Const.FRAME_LENGTH, Const.FRAME_LENGTH)
+        this.bg.drawToCanvas(Const.SQUARE_START_X + Const.FRAME_LENGTH, Const.FRAME_LENGTH)
         // 画方块
         this.squares.forEach((square) => {
             square.draw()
@@ -207,6 +239,10 @@ export default class DrawSeq {
 
         // 画调试按钮
         draw_buttons()
+
+        // 画合成图
+        draw_fruits(this.squares_lvl_map)
+        draw_score(this.score)
 
         if (databus.gameover) {
             draw_gameover(databus.score)

@@ -5,11 +5,7 @@ import Chance from './libs/chance'
 let chance = new Chance()
 let drawseq = new DrawSeq()
 
-let init_squares = {
-    idx : [23, 24],
-    lvl : 1,
-    stat : 'PRE',
-}
+let init_squares = Const.init_squares
 // let test_squares = {
 //     idx : [73, 74, 63, 64, 53, 54, 43, 44, 33, 34, 23, 24, 13],
 //     lvl:  [ 1,  1,  2,  2,  3,  3,  4,  4,  5,  5,  2,  2,  1],
@@ -31,14 +27,14 @@ export function add_new_squares(init) {
         let map = drawseq.get_squares_map()
         let key_arr = []
         let val_arr = []
-        for (let i in map) {
-            key_arr.push(i)
-            val_arr.push(map[i])
+        for (let [k, v] of map) {
+            key_arr.push(k)
+            val_arr.push(v)
         }
         let arr = chance.n(chance.weighted, 2, key_arr, val_arr)
         if (arr.length == init_squares.idx.length) {
             init_squares.idx.forEach((v, i) => {
-                drawseq.add_square(arr[i], v, init_squares.stat)
+                drawseq.add_square(parseInt(arr[i]), v, init_squares.stat)
             })
         }
     }
@@ -125,11 +121,13 @@ function check_stop(square, panel_list) {
     }
 }
 
-function check_gameover() {
-    let pre_squares = drawseq.get_pre_squares()
-    // console.log(pre_squares)
-    if (pre_squares.length > 0) {
-        return true
+function check_gameover(databus) {
+    if (databus.old_moving == Const.RUNNING_ARROW.DOWN) {
+        let pre_squares = drawseq.get_pre_squares()
+        // console.log(pre_squares)
+        if (pre_squares.length > 0) {
+            return true
+        }
     }
 }
 
@@ -205,13 +203,14 @@ function transform_squares(databus, moving) {
         })
         if (dis_tb.length > 0) {
             dis_tb.forEach((v) => {
+                let num = v.dis.length
+                let lvl = v.lvl - 1
                 v.dis.forEach((id) => {
                     drawseq.remove_square(id)
                 })
                 drawseq.add_square(v.lvl, v.start, 'PANEL')
-                databus.add_score(v.lvl)
+                databus.add_score(num * (num - Const.DISAPPEAR_NUM + 1) * Const.SQUARE_SCORE * lvl)
             })
-            // databus.slide_down()
             return true
         }
     }
@@ -239,7 +238,7 @@ export function game_update(databus) {
             if (!transform_squares(databus, databus.moving)) { // 没有变化
                 if (databus.moving == Const.RUNNING_ARROW.DOWN || databus.moving == Const.RUNNING_ARROW.SLIDE_DOWN) {
                     // 检查是否gameover
-                    if (check_gameover()) {
+                    if (check_gameover(databus)) {
                         databus.gameover = true
                         return
                     }
@@ -249,6 +248,8 @@ export function game_update(databus) {
                 databus.unlock_moving()
             } else {
                 databus.slide_mark = true
+                databus.slide_all = databus.moving == Const.RUNNING_ARROW.DOWN
+                databus.old_moving = databus.moving
             }
         }
     }

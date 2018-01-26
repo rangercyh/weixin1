@@ -4,7 +4,8 @@ import Sprite from '../base/sprite'
 export default class Square extends Sprite {
     constructor(id, lvl, idx, stat) {
         // console.log('new Square = ', id, lvl, idx, stat)
-        super(Const.Squares_Cfg[lvl].img, Const.SQUARE_SLIDE_LENGTH, Const.SQUARE_SLIDE_LENGTH)
+        let cfg = Const.Squares_Cfg.get(lvl)
+        super(cfg.img, Const.SQUARE_SLIDE_LENGTH, Const.SQUARE_SLIDE_LENGTH)
         let pos = Const[stat].idx2pos(idx)
         this.x = parseInt(pos.x)
         this.y = parseInt(pos.y)
@@ -77,11 +78,6 @@ export default class Square extends Sprite {
     }
 
     draw() {
-        let ctx = canvas.getContext('2d')
         this.drawToCanvas(this.x, this.y)
-        ctx.save()
-        ctx.font = "#ffffff"
-        ctx.fillText(this.lvl, this.x + 25, this.y + 30)
-        ctx.restore()
     }
 }
