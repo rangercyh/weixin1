@@ -10,7 +10,7 @@
 	"compileType": "game",
 	"libVersion": "game",
 	"appid": "touristappid",
-	"projectname": "weixin1",
+	"projectname": "weixin2",
 	"isGameTourist": true,
 	"condition": {
 		"search": {

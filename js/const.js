@@ -13,13 +13,20 @@
 =====================
 */
 
-// 方块边长
+// 左侧边栏
 const SQUARE_START_X = 50
-const SQUARE_SLIDE_LENGTH = 50
 const FRUIT_SLIDE_LENGTH = 40
-const MOVEING_SPEED = SQUARE_SLIDE_LENGTH / 5
+
+// 底部按钮
+let BTN_HEIGHT = 100
+
+// 消除数量下限
 const DISAPPEAR_NUM = 3
+
+// 最大的方块等级
 const Max_Square_Lvl = 10
+
+// 方块消除积分基数
 const SQUARE_SCORE = 4
 
 // panel区域
@@ -30,16 +37,35 @@ const PANEL_COL = 6
 const PRE_ROW = 3
 const PRE_COL = 6
 
-// 分界
-const DIS_HEIGHT = 30
-
-// 边框
-const FRAME_LENGTH = 10
-
+// 运动方向
 const RUNNING_DOWN = 1
 const RUNNING_LEFT = 2
 const RUNNING_RIGHT = 3
 const RUNNING_SLIDE_DOWN = 4
+
+let frame_temp = 1
+let dis_temp = 1
+let a = parseInt((window.innerWidth - SQUARE_START_X - 2 * frame_temp) / PANEL_COL)
+let b = parseInt((window.innerHeight - BTN_HEIGHT - 2 * frame_temp - dis_temp) / (PANEL_ROW + PRE_ROW))
+let c = Math.min(a, b)
+
+// 方块移动速度
+const MOVEING_SPEED = 7
+
+// 方块边长
+const SQUARE_SLIDE_LENGTH = parseInt(c / MOVEING_SPEED) * MOVEING_SPEED
+
+// 边框
+const FRAME_LENGTH = parseInt((window.innerWidth - SQUARE_START_X - PANEL_COL * SQUARE_SLIDE_LENGTH) / 2)
+
+// 分界
+let dis = parseInt(window.innerHeight - BTN_HEIGHT - FRAME_LENGTH * 2 - (PANEL_ROW + PRE_ROW) * SQUARE_SLIDE_LENGTH)
+const DIS_HEIGHT = parseInt(dis / MOVEING_SPEED) * MOVEING_SPEED
+BTN_HEIGHT = BTN_HEIGHT + dis - DIS_HEIGHT
+
+
+console.log(window.innerWidth, window.innerHeight)
+console.log(c, SQUARE_SLIDE_LENGTH, FRAME_LENGTH, DIS_HEIGHT)
 
 let Square_Map = new Map()
 for (let i = 1; i <= Max_Square_Lvl; i++) {
@@ -83,7 +109,6 @@ let Args = {
         pos2idx : function(x, y) {
             let x_dis = x - this.X
             let y_dis = y - this.Y
-            // console.log(x_dis, y_dis, x_dis % SQUARE_SLIDE_LENGTH, y_dis % SQUARE_SLIDE_LENGTH)
             if (x_dis >= 0 && y_dis >= 0 && (x_dis % SQUARE_SLIDE_LENGTH == 0) && (y_dis % SQUARE_SLIDE_LENGTH == 0)) {
                 let row = parseInt(y_dis / SQUARE_SLIDE_LENGTH) + 1
                 let col = parseInt(x_dis / SQUARE_SLIDE_LENGTH) + 1
