@@ -23,11 +23,13 @@ export default class Main {
     }
 
     slide(arrow) {
-        if (arrow == Const.SLIDE_LEFT) {
-            databus.slide_left()
-        }
-        if (arrow == Const.SLIDE_RIGHT) {
-            databus.slide_right()
+        if (!databus.moving_check) {
+            if (arrow == Const.SLIDE_LEFT) {
+                databus.slide_left()
+            }
+            if (arrow == Const.SLIDE_RIGHT) {
+                databus.slide_right()
+            }
         }
     }
 }

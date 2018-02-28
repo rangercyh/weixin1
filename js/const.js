@@ -226,8 +226,8 @@ let Args = {
             },
         },
         END_BTN : {
-            x : SQUARE_START_X + SQUARE_SLIDE_LENGTH * PRE_COL + FRAME_LENGTH * 2 + 10,
-            y : 200,
+            x : SQUARE_START_X + FRAME_LENGTH + (SQUARE_SLIDE_LENGTH * PRE_COL) / 3 * 0,
+            y : SQUARE_SLIDE_LENGTH * (PRE_ROW + PANEL_ROW) + DIS_HEIGHT + FRAME_LENGTH * 2 + 20 + 30,
             w : 80,
             h : 30,
             style : "#0aaaff",
