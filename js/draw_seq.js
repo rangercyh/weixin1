@@ -51,8 +51,8 @@ let draw_fruits = function(lvl_map, canvas_ctx = ctx) {
         }
         canvas_ctx.save()
         canvas_ctx.globalAlpha = alpha
-        let fruit = new Fruit(key)
-        fruit.draw(start_x, Const.SCREEN_HEIGHT + Const.FRAME_LENGTH - key * Const.FRUIT_SLIDE_LENGTH, canvas_ctx)
+        let fruit = new Fruit(key, start_x, Const.SCREEN_HEIGHT + Const.FRAME_LENGTH - key * Const.FRUIT_SLIDE_LENGTH)
+        fruit.draw(canvas_ctx)
         canvas_ctx.restore()
     }
 }

@@ -1,35 +1,33 @@
-import DataBus from './databus'
-import Const from './const'
+import TouchManager from './touch_manager'
+import GameCenter from './game_center'
 
-let databus = new DataBus()
+let touch_manager = new TouchManager()
+window.touch_manager = touch_manager
+let game_center = new GameCenter()
+window.game_center = game_center
 
 export default class Main {
     constructor() {
+        this.tick = 0
+        this.tick_count = 0
         this.loop()
     }
 
-    loop() {
-        this.update()
-        this.render()
-        window.requestAnimationFrame(this.loop.bind(this), canvas)
+    loop(time) {
+        this.update(time)
+        this.drawframe()
+        // 默认为 60 帧，wx.setPreferredFramesPerSecond([1 - 60])
+        requestAnimationFrame(this.loop.bind(this))
     }
 
-    update() {
-        databus.update()
+    // 逻辑帧处理补帧
+    update(ts) {
+        touch_manager.tick()
+        game_center.update()
     }
 
-    render() {
-        databus.draw()
-    }
-
-    slide(arrow) {
-        if (!databus.moving_check) {
-            if (arrow == Const.SLIDE_LEFT) {
-                databus.slide_left()
-            }
-            if (arrow == Const.SLIDE_RIGHT) {
-                databus.slide_right()
-            }
-        }
+    // 渲染帧直接画，注意保持渲染帧高于逻辑帧
+    drawframe() {
+        game_center.drawframe()
     }
 }
