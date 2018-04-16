@@ -2,6 +2,7 @@ import TouchManager from 'touch_manager'
 import Updater from 'utils/updater'
 import GameCenter from 'game_center'
 
+
 let touch_manager = new TouchManager()
 window.touch_manager = touch_manager
 let game_center = new GameCenter()

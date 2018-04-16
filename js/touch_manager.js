@@ -1,5 +1,3 @@
-import Const from 'const'
-
 let instance
 
 export default class TouchManager {
